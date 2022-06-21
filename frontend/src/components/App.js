@@ -39,7 +39,7 @@ function App() {
     tokenCheck();
     api.getInitialCards()
       .then((res) => {
-        updateCards(res);
+        updateCards(res.reverse());
       })
       .catch(err => {
         console.log(err);
@@ -54,7 +54,7 @@ function App() {
     if (!isLiked) {
       api.addLike(card._id)
       .then((newCard) => {
-        updateCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+        updateCards((state) => state.map((c) => c._id === card._id ? newCard.data : c));
       })
       .catch(err => {
         console.log(err);
@@ -63,7 +63,7 @@ function App() {
     else {
       api.deleteLike(card._id)
       .then((newCard) => {
-        updateCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+        updateCards((state) => state.map((c) => c._id === card._id ? newCard.data : c));
       })
       .catch(err => {
         console.log(err);
@@ -73,7 +73,7 @@ function App() {
 
   function handleCardDelete(card) {
     //Дополнительная проверка владельца
-    const isOwn = card.owner._id == currentUser._id;
+    const isOwn = card.owner._id === currentUser._id;
     
     if (isOwn) {
       api.deleteCard(card._id)
@@ -93,12 +93,12 @@ function App() {
 
   React.useEffect(() => {
     api.getProfile().then((res) => {
-      setCurrentUser(res);
+      setCurrentUser(res.data);
     })
     .catch((err) => {
       console.log(err);
     })
-  }, []);
+  }, [loggedIn]);
 
   React.useEffect(() => {
     if (loggedIn) {
@@ -125,7 +125,7 @@ function App() {
   function handleUpdateUser ({name, about}) {
     api.editProfile(name, about)
     .then((res) => {
-      setCurrentUser(res);
+      setCurrentUser(res.data);
       closeAllPopups();
     })
     .catch((err) => {
@@ -135,7 +135,8 @@ function App() {
   function handleUpdateAvatar ({avatar}) {
     api.updateAvatar(avatar)
     .then((res) => {
-      setCurrentUser(res);
+      setCurrentUser(res.data);
+      console.log(currentUser);
       closeAllPopups();
     })
     .catch((err) => {
@@ -146,7 +147,7 @@ function App() {
   function handleAddPlaceSubmit({name, link}) {
     api.addCard(name, link)
     .then((res) => {
-      updateCards([res, ...cards]); 
+      updateCards([res.data, ...cards]); 
       closeAllPopups();
     })
     .catch((err) => {
@@ -182,10 +183,10 @@ function App() {
     return mestoAuth
       .authorization(password, email)
       .then((data) => {
-        if (!data.token) {
+        if (!data) {
           return;
           }
-        localStorage.setItem('jwt', data.jwt);
+        localStorage.setItem('jwt', data.token);
         console.log(localStorage.getItem('jwt'));
         
         setUserEmail(email)

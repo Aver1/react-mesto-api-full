@@ -1,7 +1,16 @@
 class Api {
-  constructor({ baseUrl, headers }) {
-    this._headers = headers;
-    this._baseUrl = baseUrl;
+  constructor(data) {
+    // this._headers = headers;
+    this._baseUrl = data.baseUrl;
+  }
+
+  get _headers() {
+    return {
+        authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+    }
   }
 
   _checkResponse(res) {
@@ -86,11 +95,13 @@ class Api {
   }
 }
 
+// const token = localStorage.getItem('jwt');
+
 export const api = new Api({
   // baseUrl: 'https://mesto.nomoreparties.co/v1/cohort-37',
-  baseUrl: 'api.aver.nomoredomains.xyz',
-  headers: {
-    // authorization: localStorage.getItem('jwt'),
-    'Content-Type': 'application/json'
-  }
+  baseUrl: 'https://api.aver.nomoredomains.xyz'
+  // headers: {
+  //   authorization: token,
+  //   'Content-Type': 'application/json'
+  // }
 }); 

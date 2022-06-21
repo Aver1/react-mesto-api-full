@@ -43,5 +43,5 @@ class MestoAuth {
 }
 
 export const mestoAuth = new MestoAuth(
-  'api.aver.nomoredomains.xyz'
+  'https://api.aver.nomoredomains.xyz'
 ); 
