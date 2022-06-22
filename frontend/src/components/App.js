@@ -37,6 +37,7 @@ function App() {
 
   React.useEffect(() => {
     tokenCheck();
+    if (loggedIn === true) {
     api.getInitialCards()
       .then((res) => {
         updateCards(res.reverse());
@@ -44,7 +45,8 @@ function App() {
       .catch(err => {
         console.log(err);
       });
-  }, []);
+    }
+  }, [ ,loggedIn]);
 
   function handleCardLike(card) {
     // Снова проверяем, есть ли уже лайк на этой карточке
@@ -92,12 +94,14 @@ function App() {
   const [currentUser, setCurrentUser] = React.useState({});
 
   React.useEffect(() => {
-    api.getProfile().then((res) => {
-      setCurrentUser(res.data);
-    })
-    .catch((err) => {
-      console.log(err);
-    })
+    if (loggedIn === true) {
+      api.getProfile().then((res) => {
+        setCurrentUser(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+    }
   }, [loggedIn]);
 
   React.useEffect(() => {
@@ -147,7 +151,7 @@ function App() {
   function handleAddPlaceSubmit({name, link}) {
     api.addCard(name, link)
     .then((res) => {
-      updateCards([res.data, ...cards]); 
+      updateCards([res, ...cards]); 
       closeAllPopups();
     })
     .catch((err) => {
